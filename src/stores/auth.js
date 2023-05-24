@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import useAxios from "../composables/useAxios";
 const baseURL = import.meta.env.VITE_APP_BASE_URL;
-import axios from 'axios'
+import axios from "axios";
 
 export const useAuthStore = defineStore({
   id: "auth",
@@ -24,7 +24,7 @@ export const useAuthStore = defineStore({
         },
       };
 
-      const axiosInstance = useAxios(baseURL + "/api/login", options);
+      const axiosInstance = useAxios(baseURL + "/login", options);
 
       try {
         await axiosInstance.fetchData();
@@ -32,13 +32,16 @@ export const useAuthStore = defineStore({
         this.user = response.user;
         this.token = response.token;
         localStorage.setItem("token", this.token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${localStorage.getItem("token")}`;
       } catch (err) {
         this.error = err;
       } finally {
         this.loading = false;
       }
     },
+
     async logout() {
       this.loading = true;
       this.error = null;
@@ -48,7 +51,7 @@ export const useAuthStore = defineStore({
           "Content-type": "application/json; charset=UTF-8",
         },
       };
-      const axiosInstance = useAxios(baseURL + "/api/logout", options);
+      const axiosInstance = useAxios(baseURL + "/logout", options);
 
       try {
         await axiosInstance.fetchData();

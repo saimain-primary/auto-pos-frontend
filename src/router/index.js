@@ -1,74 +1,38 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
-import Services from "../views/Services.vue";
-import Invoices from "../views/Invoices.vue";
-import NewInvoice from "../views/NewInvoice.vue";
-import Purchases from "../views/Purchases.vue";
-import Customers from "../views/Customers.vue";
-import Settings from "../views/Settings.vue";
-import Products from "../views/Products.vue";
-import Login from "../views/Login.vue";
+import routes from "./routes";
+import axios from "axios";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/",
-      name: "home",
-      component: Home,
-    },
-    {
-      path: "/login",
-      name: "login",
-      component: Login,
-    },
-    {
-      path: "/services",
-      name: "services",
-      component: Services,
-    },
-    {
-      path: "/purchases",
-      name: "purchases",
-      component: Purchases,
-    },
-    {
-      path: "/invoices",
-      name: "invoices",
-      children: [
-        {
-          path : "",
-          name: "invoices",
-          component: Invoices,
-        },
-        {
-          path: "new",
-          name: "new-invoice",
-          component: NewInvoice,
-        },
-      ],
-    },
-    {
-      path: "/customers",
-      name: "customers",
-      component: Customers,
-    },
-    {
-      path: "/products",
-      name: "products",
-      component: Products,
-    },
-    {
-      path: "/settings",
-      name: "settings",
-      component: Settings,
-    },
-    {
-      path: "/services",
-      name: "services",
-      component: Services,
-    },
-  ],
+  routes: [...routes],
 });
+
+const checkAuth = async (to, from, next) => {
+  const token = localStorage.getItem("token");
+  if (to.meta.requiresAuth) {
+    if (token) {
+      const response = await axios.get("/me");
+      const { data } = response;
+      if (data.success && data.data.user) {
+        next();
+      } else {
+        localStorage.removeItem("token");
+        next("/login");
+      }
+    } else {
+      next("/login");
+    }
+  } else if (to.meta.preventAuth) {
+    if (token) {
+      next(from.fullPath);
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+};
+
+router.beforeEach(checkAuth);
 
 export default router;

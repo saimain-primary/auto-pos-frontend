@@ -60,7 +60,7 @@ const discountType = ref("fixed");
       </table>
       <Button
         @click="addRow"
-        class="text-sm bg-white font-medium text-gray-950 hover:bg-white hover:text-gray-950 focus:bg-white"
+        class="text-sm bg-white font-medium text-gray-900 hover:bg-white"
         ><PlusIcon class="w-4 h-4 inline-block me-1" /> Add Service</Button
       >
     </div>
